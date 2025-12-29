@@ -1,11 +1,14 @@
 package com.foodies.controllers;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import com.foodies.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,28 +31,43 @@ public class UserController {
 	@Autowired
 	private UserServiceImpl userService;
 
-	@PostMapping("/login")
-	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginDetails) {
-		System.out.println(loginDetails);
-		System.out.println("In Authenticate User " + loginDetails);
-		System.out.println(loginDetails.getEmail());
-		User user = userService.authenticate(loginDetails.getEmail(), loginDetails.getPassword());
-		System.out.println(user);
-		return new ResponseEntity<>(new ResponseDto<User>("success", user), HttpStatus.CREATED);
-	}
+    @Autowired
+    private JwtUtil jwtUtil;
 
-	
 
-	@PostMapping(value = { "/register" }, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> registerUser(@RequestBody User user) {
-		user.setRole("customer");
-		System.out.println("in create new User" + user);
+    private final PasswordEncoder passwordEncoder;
 
-		return new ResponseEntity<>(new ResponseDto<User>("success", userService.ceateNewUser(user)),
-				HttpStatus.CREATED);
-	}
+    @Autowired
+    public UserController(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
-	
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User savedUser = userService.save(user);
+        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+    }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginDetails) {
+
+        User user = userService.authenticate(
+                loginDetails.getEmail(),
+                loginDetails.getPassword());
+
+
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("token", token);
+        response.put("user", user);
+
+        return ResponseEntity.ok(response);
+
+    }
 
 	@PostMapping(value = { "/add_deliveryBoy" }, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> registerDeliveryBoy(@RequestBody User user) {
@@ -81,9 +99,9 @@ public class UserController {
 	}
 
 	@PostMapping("/change_password")
-	public ResponseEntity<?> changePassword(@RequestBody HashMap<String, String> map) {
-		String email = map.get("Email");
-		String password = map.get("Password");
+	public ResponseEntity<?> changePassword(@RequestBody LoginRequest loginDetails) {
+		String email = loginDetails.getEmail();
+		String password = loginDetails.getPassword();
 
 		return new ResponseEntity<>(new ResponseDto<>("success", userService.updatePassword(email, password)),
 				HttpStatus.CREATED);

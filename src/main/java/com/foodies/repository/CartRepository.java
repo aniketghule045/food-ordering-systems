@@ -1,4 +1,4 @@
-package com.foodies.daos;
+package com.foodies.repository;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.foodies.entity.Cart;
 
 @Repository
-public interface CartDao extends JpaRepository<Cart, Integer> {
+public interface CartRepository extends JpaRepository<Cart, Integer> {
 
 	@Query("Select c from Cart c join fetch c.selectedMenu where c.currentUser.id=:id")
 	List<Cart> findAllItemsByUser(@Param("id") Integer userId);

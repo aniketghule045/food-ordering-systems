@@ -1,4 +1,4 @@
-package com.foodies.daos;
+package com.foodies.repository;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.foodies.entity.OrderDetail;
 
 @Repository
-public interface OrderDetailDao extends JpaRepository<OrderDetail, Integer> {
+public interface OrderDetailRepository extends JpaRepository<OrderDetail, Integer> {
 
 	@Query("Select od from OrderDetail od where od.currentOrder.id=:id")
 	List<OrderDetail> findAllByOrderId(@Param("id") Integer id);

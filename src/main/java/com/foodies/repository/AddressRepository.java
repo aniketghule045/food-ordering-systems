@@ -1,4 +1,4 @@
-package com.foodies.daos;
+package com.foodies.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.foodies.entity.Address;
 
 @Repository
-public interface AddressDao extends JpaRepository<Address, Integer> {
+public interface AddressRepository extends JpaRepository<Address, Integer> {
 	
 	List<Address> getAllAddressesByUserId(@Param("id") Integer userId);
 

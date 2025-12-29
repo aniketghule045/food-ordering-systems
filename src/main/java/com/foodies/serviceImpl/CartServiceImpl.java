@@ -8,9 +8,9 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.foodies.daos.CartDao;
-import com.foodies.daos.MenuDao;
-import com.foodies.daos.UserDao;
+import com.foodies.repository.CartRepository;
+import com.foodies.repository.MenuRepository;
+import com.foodies.repository.UserRepository;
 import com.foodies.entity.Cart;
 import com.foodies.entity.Menu;
 import com.foodies.entity.User;
@@ -20,31 +20,31 @@ import com.foodies.entity.User;
 @Transactional
 public class CartServiceImpl {
 	@Autowired
-	private UserDao userDao;
+	private UserRepository userRepository;
 	@Autowired
-	private MenuDao menuDao;
+	private MenuRepository menuRepository;
 	@Autowired
-	private CartDao cartDao;
+	private CartRepository cartRepository;
 	
 
 
 	public String addItemToCart(Integer MenuId, Integer quantity, Integer userId) {
-		User customer = userDao.findById(userId).get();
-		Menu menu = menuDao.findById(MenuId).get();
-		cartDao.save(new Cart(quantity, menu, customer));
+		User customer = userRepository.findById(userId).get();
+		Menu menu = menuRepository.findById(MenuId).get();
+		cartRepository.save(new Cart(quantity, menu, customer));
 		return quantity+" "+menu.getMenuName()+" added to cart";
 	}
 
 
 
 	public List<Cart> getAllCartContents(Integer userId) {
-		return cartDao.findAllItemsByUser(userId);
+		return cartRepository.findAllItemsByUser(userId);
 	}
 
 
 
 	public String updateQuantity(Integer cartId, Integer quantity) {
-		Cart cartItem = cartDao.findById(cartId).get();
+		Cart cartItem = cartRepository.findById(cartId).get();
 		cartItem.setQuantity(quantity);
 		return "success";
 	}
@@ -52,21 +52,21 @@ public class CartServiceImpl {
 
 
 	public Optional<Cart> findById(Integer cartId) {
-		return cartDao.findById(cartId);
+		return cartRepository.findById(cartId);
 	}
 
 
 
 	public void deleteFromCart(Integer cartId) {
-		boolean exists=cartDao.existsById(cartId);
+		boolean exists= cartRepository.existsById(cartId);
 		System.out.println("in remove cart item  " + cartId);
-		cartDao.deleteById(cartId);
+		cartRepository.deleteById(cartId);
 	}
 
 
 
 	public void deleteAllFromCart(int userId) {
-		cartDao.deleteAll(cartDao.findAllItemsByUser(userId));
+		cartRepository.deleteAll(cartRepository.findAllItemsByUser(userId));
 	}
 
 }

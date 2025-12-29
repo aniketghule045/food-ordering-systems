@@ -7,9 +7,10 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.foodies.daos.UserDao;
+import com.foodies.repository.UserRepository;
 
 import com.foodies.entity.User;
 
@@ -18,7 +19,10 @@ import com.foodies.entity.User;
 @Service
 public class UserServiceImpl {
 	@Autowired
-	private UserDao userdao;
+	private UserRepository userdao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 	public User findByEmail(String email) {
 		return userdao.findByEmail(email); 
@@ -29,15 +33,22 @@ public class UserServiceImpl {
 		return userdao.save(u);
 	}
 
-	 
-	public User authenticate(String email, String password) {
-		User u=findByEmail(email);
-		byte[] decodedBytes = Base64.getDecoder().decode(u.getPassword());
-		String decodepassword = new String(decodedBytes);
-				if(u!=null && decodepassword.equals(password))
-					return u;
-		return null;
-	}
+
+    public User authenticate(String email, String password) {
+
+        User user = findByEmail(email);
+
+        if (user == null) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        // ✅ BCrypt comparison (CORRECT)
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        return user;
+    }
 
 	 
 	public User update(User u) {
@@ -88,15 +99,19 @@ public class UserServiceImpl {
 		return user.orElse(null);
 	}
 
-	 
-	public String updatePassword(String email, String password) {
-		User user = userdao.findByEmail(email);
-		String encodedPassword = Base64.getEncoder().encodeToString(user.getPassword().getBytes());
-		
-		user.setPassword(encodedPassword);
-		return "password Changed Successfully!!!";
 
-	}
+    public User updatePassword(String email, String newPassword) {
+
+        User user = userdao.findByEmail(email);
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        return userdao.save(user);
+    }
+
 
 
 }

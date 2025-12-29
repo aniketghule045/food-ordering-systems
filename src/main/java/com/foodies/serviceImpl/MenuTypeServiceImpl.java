@@ -1,7 +1,6 @@
 package com.foodies.serviceImpl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,7 +10,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.foodies.daos.Menu_TypeDao;
+import com.foodies.repository.Menu_TypeRepository;
 import com.foodies.entity.Menu;
 import com.foodies.entity.MenuType;
 
@@ -22,7 +21,7 @@ public class MenuTypeServiceImpl {
 	 
 	
 	@Autowired
-	private Menu_TypeDao menutypedao;
+	private Menu_TypeRepository menuTypeRepository;
 	
 	
 	@PostConstruct
@@ -61,28 +60,28 @@ public class MenuTypeServiceImpl {
 		list.add(menuType6);
 		list.add(menuType7);
 		list.add(menuType8);
-		menutypedao.saveAll(list);	
+		menuTypeRepository.saveAll(list);
 		
 	}
 	 
 	public List<MenuType> getAllMenuTypes() {
-		List<MenuType> list=menutypedao.findAll();
+		List<MenuType> list= menuTypeRepository.findAll();
 		return list;			
 	}
 	
 	 
 	public MenuType addOrEditCategory(MenuType menuType1) {
 		
-		return menutypedao.save(menuType1);
+		return menuTypeRepository.save(menuType1);
 	}
 	 
 	public List<MenuType> findAll() {
-		return menutypedao.findAll();
+		return menuTypeRepository.findAll();
 	}
 
 	 
 	public Menu addMenu(Menu menu, int id) {
-		Optional<MenuType> menuType = menutypedao.findById(id);
+		Optional<MenuType> menuType = menuTypeRepository.findById(id);
 		if(menuType.isPresent()) {
 			menuType.get().addMenu(menu);
 			return menu;
@@ -92,13 +91,13 @@ public class MenuTypeServiceImpl {
 
 	 
 	public MenuType findMenuType(int id) {
-		Optional<MenuType> menutype = menutypedao.findById(id);
+		Optional<MenuType> menutype = menuTypeRepository.findById(id);
 		return menutype.orElse(null);
 	}
 
 	 
 	public List<Menu> findByMenuType(int id) {
-		Optional<MenuType> menuType1 = menutypedao.findById(id);
+		Optional<MenuType> menuType1 = menuTypeRepository.findById(id);
 		MenuType menutype = menuType1.orElse(null);
 		List<Menu> menulist = menutype.getMenuList();
 		return menulist;

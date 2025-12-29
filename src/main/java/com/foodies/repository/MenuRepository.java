@@ -1,4 +1,4 @@
-package com.foodies.daos;
+package com.foodies.repository;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.foodies.entity.Menu;
 @Repository
-public interface MenuDao extends JpaRepository<Menu, Integer> {
+public interface MenuRepository extends JpaRepository<Menu, Integer> {
 	@Query(value="Select * from menu where menu_type_id=:id",nativeQuery=true)
 	public List<Menu> findAllByType(@Param("id") int menuTypeid);
 }

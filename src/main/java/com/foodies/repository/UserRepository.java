@@ -1,4 +1,4 @@
-package com.foodies.daos;
+package com.foodies.repository;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.foodies.entity.User;
 
 @Repository
-public interface UserDao extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Integer> {
 
 	User findByEmailAndPassword(String email, String password);
 

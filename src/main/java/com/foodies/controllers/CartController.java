@@ -3,6 +3,7 @@ package com.foodies.controllers;
 import java.util.HashMap;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import com.foodies.serviceImpl.CartServiceImpl;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/cart")
+@Tag(name = "Cart's APIs")
 public class CartController {
 	@Autowired
 	private CartServiceImpl cartService;

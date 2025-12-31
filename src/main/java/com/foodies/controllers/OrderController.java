@@ -2,6 +2,7 @@ package com.foodies.controllers;
 
 import java.util.HashMap;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import com.foodies.serviceImpl.OrderServiceImpl;
 @RestController
 @RequestMapping("/order")
 @CrossOrigin
+@Tag(name = "Orders APIs")
 public class OrderController {
 	@Autowired
 	private OrderServiceImpl orderService;

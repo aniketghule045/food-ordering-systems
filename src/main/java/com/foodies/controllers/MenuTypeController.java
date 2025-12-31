@@ -3,6 +3,7 @@ package com.foodies.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +25,7 @@ import com.foodies.serviceImpl.MenuTypeServiceImpl;
 @CrossOrigin
 @Controller
 @RequestMapping("/menutype")
+@Tag(name = "Menu Types APIs")
 public class MenuTypeController {
 
 	@Autowired
